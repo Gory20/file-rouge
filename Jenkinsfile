@@ -4,13 +4,13 @@ pipeline {
         dbDockerImageName = "gorysow/ligne-rouge-db"
         webDockerImage = ""
         dbDockerImage = ""
-        registryCredential = 'docker-credentiel'
+        registryCredential = 'docker-secret'
     }
     agent any
     stages {
         stage('Checkout Source') {
             steps {
-                git 'https://github.com/issa2580/ligne-rouge.git'
+                git 'https://github.com/Gory20/file-rouge.git'
             }
         }
         stage('Build Web Docker image') {
