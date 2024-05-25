@@ -2,8 +2,6 @@ pipeline {
     environment {
         webDockerImageName = "martinez42/ligne-rouge-web"
         dbDockerImageName = "martinez42/ligne-rouge-db"
-        webDockerImage = ""
-        dbDockerImage = ""
         registryCredential = 'docker-credentiel'
         KUBECONFIG = "/home/rootkit/.kube/config"
         TERRA_DIR  = "/home/rootkit/ligne-rouge/terraform"
@@ -19,14 +17,18 @@ pipeline {
         stage('Build Web Docker image') {
             steps {
                 script {
-                    webDockerImage = docker.build webDockerImageName, "-f App.Dockerfile ."
+                    def webDockerImage = docker.build("${webDockerImageName}", "-f App.Dockerfile .")
+                    // Store the image in the environment variable
+                    env.webDockerImage = webDockerImage.id
                 }
             }
         }
         stage('Build DB Docker image') {
             steps {
                 script {
-                    dbDockerImage = docker.build dbDockerImageName, "-f Db.Dockerfile ."
+                    def dbDockerImage = docker.build("${dbDockerImageName}", "-f Db.Dockerfile .")
+                    // Store the image in the environment variable
+                    env.dbDockerImage = dbDockerImage.id
                 }
             }
         }
@@ -34,7 +36,9 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', registryCredential) {
+                        def webDockerImage = docker.image(env.webDockerImage)
                         webDockerImage.push('latest')
+                        def dbDockerImage = docker.image(env.dbDockerImage)
                         dbDockerImage.push('latest')
                     }
                 }
@@ -67,12 +71,12 @@ pipeline {
             }
         }
     }
-    //post {
-      //  success {
-       //     slackSend channel: 'groupe4', message: 'Success to deploy'
-       // }
-       // failure {
-       //     slackSend channel: 'groupe4', message: 'Failed to deploy'
-        //}
-   // }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
 }
