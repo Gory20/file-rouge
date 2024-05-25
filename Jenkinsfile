@@ -10,7 +10,7 @@ pipeline {
         ANSIBLE_DIR = "/home/rootkit/ligne-rouge/ansible"
     }
     agent any
-    stages {
+    //stages {
         //stage('Checkout Source') {
             steps {
                 git 'https://github.com/issa2580/ligne-rouge.git'
