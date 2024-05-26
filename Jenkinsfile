@@ -71,12 +71,12 @@ pipeline {
             }
         }
     }
- HEAD
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
         }
-        failure {
-            echo 'Pipeline failed.'
-        }
+post {
+    success {
+        echo 'Pipeline completed successfully!'
     }
+    failure {
+        echo 'Pipeline failed.'
+    }
+}
